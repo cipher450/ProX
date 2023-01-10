@@ -16,6 +16,7 @@ urlList = ["https://free-proxy-list.net/", "https://www.proxyscrape.com/free-pro
 
 
 timeot = 15
+checked = False
 proxy_http = []
 socks5 = []
 socks4 = []
@@ -77,6 +78,7 @@ def HarvestProxies():
 
     #openproxy()
 
+#This function will make http requests to google to check if the proxy works
 def make_http_request(proxy):
     try:
         global proxy_http
@@ -88,6 +90,7 @@ def make_http_request(proxy):
         proxy_http.remove(proxy)
 
 def checkProxies():
+    global checked
     threads = []
     for p in proxy_http:
         thread = threading.Thread(target=make_http_request, args=(p,) )
@@ -97,7 +100,7 @@ def checkProxies():
 
     for thread in threads:
         thread.join()
-
+    checked=True
 
 def printlogo():
     print("        ______                                                          ")
@@ -124,10 +127,12 @@ while True:
     printlogo()
     proxiesCount=len(proxy_http)+len(socks4)+len(socks5)
     print("----------------------------------------------")
+
     print("HTTP : ", len(proxy_http))
     print("Socks 4  : " ,len(socks4))
     print("Socks 5 : " ,len(socks5))
     print("All proxies : " ,proxiesCount)
+    print("Checked : " , "\033[92mTrue\033[0m" if checked else "\033[91mFalse\033[0m" )
     print("----------------------------------------------")
     print("1 - Check proxies")
     print("2 - Get yourself some proxies")
@@ -141,5 +146,6 @@ while True:
                 checkProxies()
         case "2":
             HarvestProxies()
+            browser.close()
         case "4":
             break
